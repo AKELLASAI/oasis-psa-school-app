@@ -1,0 +1,100 @@
+PUT OASIS ON THE INTERNET (ALWAYS ON)
+=====================================
+
+When this is done, parents and staff open Oasis from anywhere at an address such as
+https://app.oasisschool.in, on any phone or computer, even when this Mac is switched off.
+Everything runs on a small cloud server. HTTPS (the padlock) is set up and renewed automatically.
+
+You do steps 1 and 2 (they need your accounts and payment). Step 3 is one double-click.
+
+
+1. GET A CLOUD SERVER (about 10 minutes)
+----------------------------------------
+Any provider that offers an Ubuntu server works, for example DigitalOcean, AWS Lightsail,
+Hostinger VPS, Linode/Akamai or Vultr. When creating it choose:
+   - Operating system : Ubuntu 24.04 LTS (or 22.04)
+   - Size             : the smallest plan with 1 GB memory is enough to start
+   - Location         : India (Mumbai / Bangalore / Hyderabad), so it is fast for parents
+   - Login            : a root password, or an SSH key file (keep the key file safe on this Mac)
+Write down the server's public IP address (for example 139.59.12.34).
+
+If the provider has its own firewall ("Networking", "Firewall" or "Security group"),
+allow these ports: 22 (SSH), 80 (HTTP) and 443 (HTTPS).
+
+
+2. POINT A WEB ADDRESS TO IT (optional, recommended)
+----------------------------------------------------
+Buy a domain (for example oasisschool.in) from any registrar, or use one you already have.
+In the domain's DNS settings add:
+   Type: A      Name: app      Value: <the server's IP address>
+Your address will then be  https://app.oasisschool.in
+(It can take from a few minutes to a few hours before a new record works.)
+
+No domain yet? Leave the web address empty in step 3. You get a free temporary address such as
+https://139-59-12-34.sslip.io that works straight away. Run step 3 again later with your domain.
+
+
+3. DOUBLE-CLICK "Put Oasis Online"
+----------------------------------
+It asks for:
+   - the server IP address
+   - the login name (root, or ubuntu on AWS Lightsail)
+   - the web address from step 2 (or leave it empty)
+   - your email (the HTTPS certificate service uses it for notices)
+   - the SSH key file, if your provider gave you one (you can drag the file into the Terminal window)
+Then type the server password when asked. The first time it takes 5 to 10 minutes.
+
+The first time it also offers to copy the school records from this Mac to the server. Say yes.
+From then on the server's records are the real ones: stop using the Oasis server on this Mac
+(close its Terminal window), or records typed there will not appear online.
+
+The email and WhatsApp/SMS settings in server/.env on this Mac are copied to the server each time.
+To change them: edit server/.env here, then double-click "Put Oasis Online" again.
+
+
+4. AFTER IT IS LIVE
+-------------------
+   - Sign in with an administrator account.
+   - School Profile & Branding > "Fee Payments by UPI": enter the school's UPI ID (use the school's
+     own bank or business UPI ID) and press Save. Parents then see a QR code on the payment screen.
+   - Role Master: check the new "Payroll & Salaries" screen. Only roles ticked there can see salaries
+     and bank details, or process salary payouts.
+   - The svakella35 administrator account is marked Rejected and has no password. Either approve it
+     in User Master and set a password there, or on the server run:
+         sudo oasis set-password svakella35 <new password of 8+ characters>
+   - Send parents the address. They open it in Chrome (Android) or Safari (iPhone) and choose
+     "Install app" or "Add to Home Screen". The Android .apk is only for an office phone that must
+     work without internet (it keeps its own separate records).
+
+
+SENDING UPDATES LATER
+---------------------
+Whenever the app files in this folder change, double-click "Put Oasis Online" again and press Return
+to keep your earlier answers. The school records on the server are never replaced by an update.
+
+
+HOW FEE PAYMENTS WORK NOW
+-------------------------
+   - Parents: "Pay now" shows the school's UPI QR code and ID. After paying in their UPI app they type
+     the UPI reference number (UTR) and press Send. It arrives in Contact Us > enquiries as
+     "Fee paid by UPI - please confirm". Nothing is marked paid yet.
+   - Office: check the bank or UPI app, then Payments > Record Fee Payment (UPI, cash, cheque, bank
+     transfer or card machine) with the reference. The receipt is made at that moment.
+   - Card numbers are never typed into Oasis. The pretend card and bank OTP screen was removed.
+
+
+LOOKING AFTER THE SERVER
+------------------------
+Log in to the server (Terminal on the Mac:  ssh root@<server IP>) and use:
+   sudo oasis status                      is the app running?
+   sudo oasis logs                        the app's latest messages (email check, errors)
+   sudo oasis restart                     restart the app and the web server
+   sudo oasis set-password <user> <pw>    reset a password (also re-activates a locked-out admin)
+
+Backups: the server keeps a copy of the records every day for 30 days (/opt/oasis/data/backups).
+Also download a backup yourself every week: School Profile & Branding > Download backup.
+Most providers also sell automatic server snapshots; they are worth switching on.
+
+If login codes are not emailed: run "sudo oasis logs" and look for "Email login check". If it failed,
+check SMTP_USER / SMTP_PASS in server/.env and send again. Some providers block email ports on new
+servers; if so, ask their support to allow outgoing port 465.
