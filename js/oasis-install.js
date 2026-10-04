@@ -50,8 +50,7 @@
 
   var DISMISS = 'oasis_install_fab_hidden';
   var fab = null;
-  var dismissed = false;
-  try { dismissed = localStorage.getItem(DISMISS) === '1'; } catch (e) {}
+  var dismissed = true; // floating Install button turned off
   if (!dismissed) {
     fab = document.createElement('button');
     fab.type = 'button';
