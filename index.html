@@ -21,7 +21,8 @@
         // Opened by double-clicking (file://) or inside the Android app: the records live on this device (offline copy).
         // Opened from the Oasis server (http/https): the server holds the records and checks every sign-in.
         window.OASIS_ANDROID_APP = location.hostname === 'appassets.androidplatform.net';
-        window.OASIS_SERVER_MODE = location.protocol !== 'file:' && !window.OASIS_ANDROID_APP;
+        window.OASIS_BROWSER_ONLY = true; // Vercel copy: no Oasis server, records stay in this browser
+        window.OASIS_SERVER_MODE = location.protocol !== 'file:' && !window.OASIS_ANDROID_APP && !window.OASIS_BROWSER_ONLY;
         if (window.OASIS_SERVER_MODE) document.write('<script src="js/oasis-client.js"><\/script>');
         else document.write('<script src="vendor/sql-asm.js"><\/script><script src="js/scrypt.js"><\/script><script src="js/seed-db.js"><\/script><script src="js/oasis-api.js"><\/script>');
     </script>
